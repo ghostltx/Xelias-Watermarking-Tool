@@ -1275,11 +1275,15 @@
     function fitPreviewToScreen() {
       if (!selectedItem() || !els.previewCanvas.width || !els.previewCanvas.height) return;
       const stage = els.workbenchPanel.querySelector('.preview-stage');
-      const stageRect = stage.getBoundingClientRect();
-      const padding = 80;
-      const availableWidth = Math.max(120, stageRect.width - padding);
-      const availableHeight = Math.max(120, stageRect.height - padding);
-      const fitZoom = Math.min(1, availableWidth / els.previewCanvas.width, availableHeight / els.previewCanvas.height);
+      const center = els.workbenchPanel.querySelector('.preview-center');
+      const centerStyle = getComputedStyle(center);
+      const horizontalPadding = parseFloat(centerStyle.paddingLeft) + parseFloat(centerStyle.paddingRight);
+      const verticalPadding = parseFloat(centerStyle.paddingTop) + parseFloat(centerStyle.paddingBottom);
+      const availableWidth = Math.max(1, stage.clientWidth - horizontalPadding);
+      const availableHeight = Math.max(1, stage.clientHeight - verticalPadding);
+      const widthZoom = availableWidth / els.previewCanvas.width;
+      const heightZoom = availableHeight / els.previewCanvas.height;
+      const fitZoom = Math.min(1, widthZoom, heightZoom);
       state.zoom = Math.max(.05, Math.min(2, fitZoom));
       updateLabels();
       requestAnimationFrame(() => {
