@@ -184,23 +184,18 @@
     .preview-stage {
       min-height: 0;
       overflow: auto;
-      display: grid;
-      place-items: center;
-      align-content: center;
-      justify-content: center;
     }
     .preview-center {
+      width: max-content;
+      height: max-content;
       min-width: 100%;
       min-height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: grid;
+      place-items: center;
       padding: 40px;
+      box-sizing: border-box;
     }
     #previewCanvas {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
       transform-origin: center;
       box-shadow: 0 22px 50px rgba(15, 23, 42, .18);
       background: transparent;
@@ -208,8 +203,6 @@
     .canvas-stack {
       position: relative;
       display: inline-block;
-      max-width: 100%;
-      max-height: 100%;
       transform-origin: center;
     }
     .canvas-stack canvas { display: block; }
