@@ -9,6 +9,11 @@ A single-file browser tool for batch watermarking image folders. It runs locally
 3. Adjust watermark layers on the preview canvas.
 4. Use `Export Current` or the right-side `Export All` button to write results back to the original folder.
 
+## v1.0.4 Release Highlights
+
+- Removed the `Fit to Screen` control from the zoom toolbar.
+- Enlarged the `1:1` button and simplified the zoom toolbar layout.
+
 ## v1.0.3 Release Highlights
 
 - Stabilized the preview layout so `Fit to Screen` uses the calculated size directly without CSS max-size rules overriding it.

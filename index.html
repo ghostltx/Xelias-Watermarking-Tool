@@ -277,12 +277,12 @@
       box-shadow: inset 0 1px 1px rgba(255,255,255,.48), inset 0 -16px 26px rgba(0,52,150,.24), 0 18px 42px rgba(0,114,245,.34), 0 0 32px rgba(3,187,255,.28);
     }
     #sampleBtn,
-    #actualSizeBtn,
-    #fitBtn {
+    #actualSizeBtn {
       box-shadow: inset 1px 1px 0 rgba(255,255,255,.72), 0 7px 18px rgba(22,94,160,.08);
     }
-    #fitBtn {
-      background: linear-gradient(135deg, #005fcf, #0088ff) !important;
+    #actualSizeBtn {
+      min-width: 92px;
+      white-space: nowrap;
     }
     @media (max-width: 1050px) {
       body { overflow: auto; }
@@ -381,7 +381,6 @@
       border: 2px solid #0088ff;
       box-shadow: 0 0 0 5px rgba(0,136,255,.14), 0 8px 18px rgba(0,76,160,.24), inset 1px 1px 0 rgba(255,255,255,.95) !important;
     }
-    #fitBtn,
     aside .bg-\[\#0058bc\],
     .primary-button {
       background:
@@ -392,10 +391,6 @@
         inset 0 -12px 24px rgba(0, 42, 130, .20),
         0 18px 38px rgba(0, 105, 220, .32),
         0 0 30px rgba(0, 194, 255, .25) !important;
-    }
-    #fitBtn {
-      min-width: 68px;
-      white-space: nowrap;
     }
     aside .bg-\[\#0058bc\] {
       border: 1px solid rgba(255,255,255,.35);
@@ -533,7 +528,6 @@
 
     /* Soft frosted action buttons */
     .primary-button,
-    #fitBtn,
     aside .bg-\[\#0058bc\],
     .bg-\[\#0058bc\]\/10,
     #progressBar {
@@ -551,8 +545,7 @@
       backdrop-filter: blur(22px) saturate(1.28) !important;
       -webkit-backdrop-filter: blur(22px) saturate(1.28) !important;
     }
-    .primary-button:hover,
-    #fitBtn:hover {
+    .primary-button:hover {
       background:
         radial-gradient(circle at 22% 12%, rgba(255,255,255,.90), transparent 30%),
         linear-gradient(145deg, rgba(255,255,255,.68), rgba(229, 247, 255, .45) 46%, rgba(211, 233, 255, .36)) !important;
@@ -563,7 +556,6 @@
         0 0 28px rgba(180, 220, 255, .24) !important;
     }
     .primary-button .material-symbols-outlined,
-    #fitBtn,
     aside .bg-\[\#0058bc\] .material-symbols-outlined {
       color: rgba(0, 94, 190, .88) !important;
     }
@@ -914,17 +906,16 @@
           </div>
         </div>
 
-        <div class="flex items-center gap-2 bg-white/58 backdrop-blur-xl border border-white/70 rounded-2xl shadow-xl px-3 py-2">
+        <div class="flex items-center justify-between gap-2 bg-white/58 backdrop-blur-xl border border-white/70 rounded-2xl shadow-xl px-3 py-2">
           <button id="zoomOutBtn" class="w-9 h-9 rounded-xl hover:bg-white/70 grid place-items-center" title="缩小">
             <span class="material-symbols-outlined">remove</span>
           </button>
-          <div id="zoomLabel" class="w-14 text-center font-mono text-xs font-extrabold text-[#0058bc]">100%</div>
+          <div id="zoomLabel" class="w-16 text-center font-mono text-xs font-extrabold text-[#0058bc]">100%</div>
           <button id="zoomInBtn" class="w-9 h-9 rounded-xl hover:bg-white/70 grid place-items-center" title="放大">
             <span class="material-symbols-outlined">add</span>
           </button>
           <div class="w-px h-5 bg-[#0058bc]/20"></div>
-          <button id="actualSizeBtn" class="h-8 px-3 rounded-xl hover:bg-white/70 text-[11px] font-extrabold">1:1</button>
-          <button id="fitBtn" class="h-8 px-3 rounded-xl bg-[#0058bc] text-white text-[11px] font-extrabold">适应屏幕</button>
+          <button id="actualSizeBtn" class="h-9 min-w-[82px] px-5 rounded-xl hover:bg-white/70 text-xs font-extrabold">1:1</button>
         </div>
 
         <button id="exportAllBtn" class="primary-button mt-auto py-4 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-2" title="导出全部图片">
@@ -934,7 +925,7 @@
     </main>
 
     <footer class="h-10 px-9 flex items-center justify-between bg-white/18 border-t border-white/30 backdrop-blur-lg">
-      <p class="text-[11px] text-slate-500 font-semibold">版本 1.0.1 • HTML 单文件版</p>
+      <p class="text-[11px] text-slate-500 font-semibold">版本 1.0.4 • HTML 单文件版</p>
       <div class="flex items-center gap-6 text-[11px] text-slate-500">
         <span class="status" id="statusText">准备就绪</span>
         <span class="flex items-center gap-1 text-[#0058bc] font-extrabold"><span class="material-symbols-outlined text-sm">shield_check</span>本地安全处理模式已激活</span>
@@ -1022,7 +1013,6 @@
       zoomOutBtn: $('zoomOutBtn'),
       zoomInBtn: $('zoomInBtn'),
       zoomLabel: $('zoomLabel'),
-      fitBtn: $('fitBtn'),
       actualSizeBtn: $('actualSizeBtn'),
       statusText: $('statusText'),
       fileMetaBar: $('fileMetaBar'),
@@ -1263,26 +1253,6 @@
           canvas.style.height = `${displayHeight}px`;
         });
       }
-    }
-
-    function fitPreviewToScreen() {
-      if (!selectedItem() || !els.previewCanvas.width || !els.previewCanvas.height) return;
-      const stage = els.workbenchPanel.querySelector('.preview-stage');
-      const center = els.workbenchPanel.querySelector('.preview-center');
-      const centerStyle = getComputedStyle(center);
-      const horizontalPadding = parseFloat(centerStyle.paddingLeft) + parseFloat(centerStyle.paddingRight);
-      const verticalPadding = parseFloat(centerStyle.paddingTop) + parseFloat(centerStyle.paddingBottom);
-      const availableWidth = Math.max(1, stage.clientWidth - horizontalPadding);
-      const availableHeight = Math.max(1, stage.clientHeight - verticalPadding);
-      const widthZoom = availableWidth / els.previewCanvas.width;
-      const heightZoom = availableHeight / els.previewCanvas.height;
-      const fitZoom = Math.min(1, widthZoom, heightZoom);
-      state.zoom = Math.max(.05, Math.min(2, fitZoom));
-      updateLabels();
-      requestAnimationFrame(() => {
-        stage.scrollLeft = Math.max(0, (stage.scrollWidth - stage.clientWidth) / 2);
-        stage.scrollTop = Math.max(0, (stage.scrollHeight - stage.clientHeight) / 2);
-      });
     }
 
     function activeWatermark() {
@@ -2101,7 +2071,6 @@
       els.sampleBtn.onclick = addSample;
       els.zoomOutBtn.onclick = () => { state.zoom = Math.max(.05, state.zoom - .1); updateLabels(); };
       els.zoomInBtn.onclick = () => { state.zoom = Math.min(2, state.zoom + .1); updateLabels(); };
-      els.fitBtn.onclick = fitPreviewToScreen;
       els.actualSizeBtn.onclick = () => { state.zoom = 1; updateLabels(); };
       els.tabWorkbench.onclick = () => showTab('workbench');
       els.tabHistory.onclick = () => { renderHistory(); showTab('history'); };
