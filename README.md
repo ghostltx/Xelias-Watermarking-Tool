@@ -1,61 +1,92 @@
 # Xelias Watermarking Tool
 
-A single-file browser tool for batch watermarking image folders. It runs locally in the browser, keeps image formats unchanged, and can overwrite original files after folder authorization.
+一个单文件 HTML 图片水印工具。它在浏览器本地运行，可以批量给文件夹里的图片添加水印，并在获得文件夹授权后覆盖写回原图片文件。
 
-## Quick Start
+## 快速开始
 
-1. Open `index.html` or `Xelias Watermarking Tool.html` in a modern Chromium browser.
-2. Click the left import area or the center empty-state card to authorize the original image folder.
-3. Adjust watermark layers on the preview canvas.
-4. Use `Export Current` or the right-side `Export All` button to write results back to the original folder.
+1. 使用最新版 Chrome 或 Edge 打开 `index.html`，也可以打开 `Xelias Watermarking Tool.html`。
+2. 点击左侧导入区域，或点击中间空状态区域，选择并授权原图片文件夹。
+3. 在中间预览区拖动、缩放、旋转水印图层。
+4. 点击 `导出当前` 或右侧底部的 `导出全部`，将处理后的图片写回原文件夹。
 
-## v1.0.4 Release Highlights
+## 默认水印为什么不需要单独 PNG 文件
 
-- Removed the `Fit to Screen` control from the zoom toolbar.
-- Enlarged the `1:1` button and simplified the zoom toolbar layout.
+工具默认自带的水印原本是 PNG 图片，但它没有作为单独的 `.png` 文件放在仓库里，而是被内置进 HTML 文件中。
 
-## v1.0.3 Release Highlights
+实现方式是把 PNG 转换成 `base64 data URL`，然后直接写入 HTML 的 JavaScript 变量：
 
-- Stabilized the preview layout so `Fit to Screen` uses the calculated size directly without CSS max-size rules overriding it.
-- Verified in a real headless Chromium session with tall and wide test images.
+```js
+const DEFAULT_WATERMARK_DATA_URL = 'data:image/png;base64,...';
+```
 
-## v1.0.2 Release Highlights
+页面打开后，脚本会从这个内置字符串创建默认水印图片。因此只要 HTML 文件还在，默认水印就会一起存在，不需要额外携带或加载 PNG 文件。
 
-- Corrected `Fit to Screen` to use the actual visible preview viewport size, so tall images fit by maximum height and wide images fit by maximum width.
+这样做的好处：
 
-## v1.0.1 Release Highlights
+- 单个 HTML 文件即可完整运行。
+- 发给别人时不需要再附带默认水印图片。
+- 离线打开也能显示默认水印。
+- 删除水印图层不会删除内置的默认水印资产。
 
-- Fixed the `Fit to Screen` button so the full image is visible when either width or height exceeds the preview area.
-- Kept `1:1` as the explicit actual-size view while `Fit to Screen` now calculates the zoom from the preview window size.
-- Removed the optional HTML package zip from the repository. The tool is a single-file HTML app, so the zip is not required when using `index.html` directly.
+需要注意：
 
-## v1.0.0 Release Highlights
+- HTML 文件会比普通页面大一点。
+- 如果要替换默认水印，需要重新把新的 PNG 转成 base64 并写入 HTML。
 
-- Renamed the app to **Xelias Watermarking Tool**.
-- Added a liquid-glass interface style while preserving the original workflow.
-- Added a built-in default AI-generated disclosure watermark.
-- Added a watermark asset area: the built-in watermark remains available even if all layers are deleted, and users can still add custom watermark images.
-- Added multiple image watermark layers with independent position, scale, opacity, and rotation.
-- Added canvas interactions:
-  - Drag watermark layers directly in the preview.
-  - `Alt + drag` duplicates a watermark layer at the same size and continues dragging the new layer.
-  - `Ctrl + Alt + click` deletes a watermark layer.
-  - Smart alignment guides and snapping for multiple watermark blocks.
-- Added top-bar image metadata: folder/name, resolution, and file size.
-- Moved `Export All` to the right-side main action area.
-- Kept top-right actions focused on `Clear` and `Export Current`.
-- Added center empty-state click-to-import behavior.
-- Added glass-style export completion toast and batch export progress strip.
-- Added offline layout fallback CSS so the app keeps its three-column layout even if CDN styles load slowly.
+## v1.0.5 更新内容
 
-## Files
+- README 全部改为中文。
+- 新增默认 PNG 水印的内置原理说明。
+- 说明默认水印通过 `base64 data URL` 写入 HTML，所以不需要单独上传 PNG 文件。
 
-- `index.html` - recommended entry point.
-- `Xelias Watermarking Tool.html` - same app with a descriptive filename.
+## v1.0.4 更新内容
 
-## Notes
+- 移除了缩放工具条里的 `适应屏幕` 按钮。
+- 放大了 `1:1` 按钮。
+- 简化缩放工具条布局，只保留手动缩放和实际大小重置。
 
-- Folder overwrite export requires the browser File System Access API. Use the latest Chrome or Edge.
-- The app works locally; images are processed in the browser.
-- Export overwrites the original image files in the authorized folder.
-- A zip package is optional for distribution, but it is not needed for normal HTML use.
+## v1.0.3 更新内容
+
+- 稳定了预览区布局，避免 CSS 最大尺寸规则影响 JS 计算出的画布显示尺寸。
+- 使用真实 headless Chromium 测试过超高图和超宽图。
+
+## v1.0.2 更新内容
+
+- 修正 `适应屏幕` 的计算逻辑，改为按中间预览区真实可见尺寸计算。
+
+## v1.0.1 更新内容
+
+- 修复图片宽度或高度超出预览区域时的适配问题。
+- 保留 `1:1` 作为实际大小按钮。
+- 移除了可选 HTML 压缩包文件；直接使用 HTML 时不需要 zip。
+
+## v1.0.0 更新内容
+
+- 应用名称改为 **Xelias Watermarking Tool**。
+- 增加液态玻璃风格界面。
+- 增加内置默认 AI 生成标识水印。
+- 增加水印资产区域：即使删除所有图层，内置默认水印仍然可以重新添加。
+- 支持添加多个图片水印图层，每个图层可以单独控制位置、缩放、不透明度和旋转角度。
+- 支持在预览区直接拖动水印。
+- 支持 `Alt + 拖动水印` 复制同尺寸图层。
+- 支持 `Ctrl + Alt + 点击水印` 删除图层。
+- 支持多个水印块之间的智能对齐辅助线和吸附。
+- 顶部显示当前图片的文件夹、文件名、分辨率和大小。
+- `导出全部` 移到右侧主操作区域。
+- 右上角只保留 `清空` 和 `导出当前`。
+- 中间空状态区域可以点击导入文件夹。
+- 增加玻璃风格导出完成提示和批量导出进度条。
+- 增加离线布局兜底 CSS，避免 CDN 样式加载慢时页面布局散掉。
+
+## 文件说明
+
+- `index.html`：推荐入口文件，也是 GitHub Pages 或静态网站通常默认识别的首页文件。
+- `Xelias Watermarking Tool.html`：同一个工具的描述性文件名版本，方便下载后直接双击识别用途。
+- `README.md`：项目说明文档，不参与工具运行。
+
+## 使用说明
+
+- 覆盖写回原文件夹需要浏览器支持 File System Access API，建议使用最新版 Chrome 或 Edge。
+- 所有图片处理都在浏览器本地完成。
+- 导出时会覆盖原图片文件，请确认原图已经备份或可以被覆盖。
+- zip 压缩包不是运行必需文件；如果只使用 HTML 版本，保留 HTML 文件即可。
