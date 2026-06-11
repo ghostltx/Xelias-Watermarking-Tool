@@ -941,7 +941,7 @@
     </main>
 
     <footer class="h-10 px-9 flex items-center justify-between bg-white/18 border-t border-white/30 backdrop-blur-lg">
-      <p class="text-[11px] text-slate-500 font-semibold">版本 3.0.0 • HTML 单文件版</p>
+      <p class="text-[11px] text-slate-500 font-semibold">版本 1.0.1 • HTML 单文件版</p>
       <div class="flex items-center gap-6 text-[11px] text-slate-500">
         <span class="status" id="statusText">准备就绪</span>
         <span class="flex items-center gap-1 text-[#0058bc] font-extrabold"><span class="material-symbols-outlined text-sm">shield_check</span>本地安全处理模式已激活</span>
@@ -1258,7 +1258,34 @@
       els.scaleValue.textContent = `${els.scale.value}%`;
       els.rotationValue.textContent = `${els.rotation.value}°`;
       els.zoomLabel.textContent = `${Math.round(state.zoom * 100)}%`;
-      els.canvasStack.style.transform = `scale(${state.zoom})`;
+      const canvasWidth = els.previewCanvas.width || 0;
+      const canvasHeight = els.previewCanvas.height || 0;
+      if (canvasWidth && canvasHeight) {
+        const displayWidth = Math.max(1, Math.round(canvasWidth * state.zoom));
+        const displayHeight = Math.max(1, Math.round(canvasHeight * state.zoom));
+        els.canvasStack.style.width = `${displayWidth}px`;
+        els.canvasStack.style.height = `${displayHeight}px`;
+        [els.previewCanvas, els.guideCanvas].forEach(canvas => {
+          canvas.style.width = `${displayWidth}px`;
+          canvas.style.height = `${displayHeight}px`;
+        });
+      }
+    }
+
+    function fitPreviewToScreen() {
+      if (!selectedItem() || !els.previewCanvas.width || !els.previewCanvas.height) return;
+      const stage = els.workbenchPanel.querySelector('.preview-stage');
+      const stageRect = stage.getBoundingClientRect();
+      const padding = 80;
+      const availableWidth = Math.max(120, stageRect.width - padding);
+      const availableHeight = Math.max(120, stageRect.height - padding);
+      const fitZoom = Math.min(1, availableWidth / els.previewCanvas.width, availableHeight / els.previewCanvas.height);
+      state.zoom = Math.max(.05, Math.min(2, fitZoom));
+      updateLabels();
+      requestAnimationFrame(() => {
+        stage.scrollLeft = Math.max(0, (stage.scrollWidth - stage.clientWidth) / 2);
+        stage.scrollTop = Math.max(0, (stage.scrollHeight - stage.clientHeight) / 2);
+      });
     }
 
     function activeWatermark() {
@@ -1376,10 +1403,6 @@
       if (canvas === els.previewCanvas) {
         els.guideCanvas.width = canvas.width;
         els.guideCanvas.height = canvas.height;
-        els.guideCanvas.style.width = `${canvas.width}px`;
-        els.guideCanvas.style.height = `${canvas.height}px`;
-        els.canvasStack.style.width = `${canvas.width}px`;
-        els.canvasStack.style.height = `${canvas.height}px`;
       }
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -2079,9 +2102,9 @@
       els.exportCurrentBtn.onclick = exportCurrent;
       els.closeModalBtn.onclick = () => els.exportModal.classList.remove('open');
       els.sampleBtn.onclick = addSample;
-      els.zoomOutBtn.onclick = () => { state.zoom = Math.max(.25, state.zoom - .1); updateLabels(); };
+      els.zoomOutBtn.onclick = () => { state.zoom = Math.max(.05, state.zoom - .1); updateLabels(); };
       els.zoomInBtn.onclick = () => { state.zoom = Math.min(2, state.zoom + .1); updateLabels(); };
-      els.fitBtn.onclick = () => { state.zoom = 1; updateLabels(); };
+      els.fitBtn.onclick = fitPreviewToScreen;
       els.actualSizeBtn.onclick = () => { state.zoom = 1; updateLabels(); };
       els.tabWorkbench.onclick = () => showTab('workbench');
       els.tabHistory.onclick = () => { renderHistory(); showTab('history'); };

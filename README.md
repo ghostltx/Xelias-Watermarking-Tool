@@ -9,6 +9,12 @@ A single-file browser tool for batch watermarking image folders. It runs locally
 3. Adjust watermark layers on the preview canvas.
 4. Use `Export Current` or the right-side `Export All` button to write results back to the original folder.
 
+## v1.0.1 Release Highlights
+
+- Fixed the `Fit to Screen` button so the full image is visible when either width or height exceeds the preview area.
+- Kept `1:1` as the explicit actual-size view while `Fit to Screen` now calculates the zoom from the preview window size.
+- Removed the optional HTML package zip from the repository. The tool is a single-file HTML app, so the zip is not required when using `index.html` directly.
+
 ## v1.0.0 Release Highlights
 
 - Renamed the app to **Xelias Watermarking Tool**.
@@ -32,10 +38,10 @@ A single-file browser tool for batch watermarking image folders. It runs locally
 
 - `index.html` - recommended entry point.
 - `Xelias Watermarking Tool.html` - same app with a descriptive filename.
-- `Xelias Watermarking Tool-HTML Package.zip` - packaged HTML build.
 
 ## Notes
 
 - Folder overwrite export requires the browser File System Access API. Use the latest Chrome or Edge.
 - The app works locally; images are processed in the browser.
 - Export overwrites the original image files in the authorized folder.
+- A zip package is optional for distribution, but it is not needed for normal HTML use.
