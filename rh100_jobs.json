@@ -1,0 +1,124 @@
+{
+  "createdAt": "2026-06-16 17:22:21",
+  "uploads": {
+    "C:\\Users\\ghost\\Documents\\Codex\\2026-06-16\\high-quality-outdoor-living-space-featuring\\outputs\\empty_scene_v5_1.jpg": "<redacted>",
+    "C:\\Users\\ghost\\Desktop\\AI05\\AI04.png": "<redacted>"
+  },
+  "jobs": [
+    {
+      "name": "empty_scene_v5_1_v1",
+      "target": "C:\\Users\\ghost\\Documents\\Codex\\2026-06-16\\high-quality-outdoor-living-space-featuring\\outputs\\empty_scene_v5_1.jpg",
+      "variant": 1,
+      "imageUrls": [
+        "<redacted>",
+        "<redacted>"
+      ],
+      "status": "SUCCESS",
+      "taskId": "2066813633257951234",
+      "submittedAt": "2026-06-16 17:22:24",
+      "lastQueryAt": "2026-06-16 17:25:06",
+      "usage": {
+        "consumeMoney": null,
+        "consumeCoins": null,
+        "taskCostTime": "0",
+        "thirdPartyConsumeMoney": "0.16"
+      },
+      "saved": [
+        "C:\\Users\\ghost\\Desktop\\phone\\rh100_out\\empty_scene_v5_1_v1_1.jpg"
+      ],
+      "finishedAt": "2026-06-16 17:25:07"
+    },
+    {
+      "name": "empty_scene_v5_1_v2",
+      "target": "C:\\Users\\ghost\\Documents\\Codex\\2026-06-16\\high-quality-outdoor-living-space-featuring\\outputs\\empty_scene_v5_1.jpg",
+      "variant": 2,
+      "imageUrls": [
+        "<redacted>",
+        "<redacted>"
+      ],
+      "status": "SUCCESS",
+      "taskId": "2066813633421524993",
+      "submittedAt": "2026-06-16 17:22:24",
+      "lastQueryAt": "2026-06-16 17:25:06",
+      "usage": {
+        "consumeMoney": null,
+        "consumeCoins": null,
+        "taskCostTime": "0",
+        "thirdPartyConsumeMoney": "0.16"
+      },
+      "saved": [
+        "C:\\Users\\ghost\\Desktop\\phone\\rh100_out\\empty_scene_v5_1_v2_1.jpg"
+      ],
+      "finishedAt": "2026-06-16 17:25:07"
+    },
+    {
+      "name": "empty_scene_v5_1_v3",
+      "target": "C:\\Users\\ghost\\Documents\\Codex\\2026-06-16\\high-quality-outdoor-living-space-featuring\\outputs\\empty_scene_v5_1.jpg",
+      "variant": 3,
+      "imageUrls": [
+        "<redacted>",
+        "<redacted>"
+      ],
+      "status": "SUCCESS",
+      "taskId": "2066813632662343681",
+      "submittedAt": "2026-06-16 17:22:24",
+      "lastQueryAt": "2026-06-16 17:27:12",
+      "usage": {
+        "consumeMoney": null,
+        "consumeCoins": null,
+        "taskCostTime": "0",
+        "thirdPartyConsumeMoney": "0.16"
+      },
+      "saved": [
+        "C:\\Users\\ghost\\Desktop\\phone\\rh100_out\\empty_scene_v5_1_v3_1.jpg"
+      ],
+      "finishedAt": "2026-06-16 17:27:13"
+    },
+    {
+      "name": "empty_scene_v5_1_v4",
+      "target": "C:\\Users\\ghost\\Documents\\Codex\\2026-06-16\\high-quality-outdoor-living-space-featuring\\outputs\\empty_scene_v5_1.jpg",
+      "variant": 4,
+      "imageUrls": [
+        "<redacted>",
+        "<redacted>"
+      ],
+      "status": "SUCCESS",
+      "taskId": "2066813632872075266",
+      "submittedAt": "2026-06-16 17:22:24",
+      "lastQueryAt": "2026-06-16 17:25:06",
+      "usage": {
+        "consumeMoney": null,
+        "consumeCoins": null,
+        "taskCostTime": "0",
+        "thirdPartyConsumeMoney": "0.16"
+      },
+      "saved": [
+        "C:\\Users\\ghost\\Desktop\\phone\\rh100_out\\empty_scene_v5_1_v4_1.jpg"
+      ],
+      "finishedAt": "2026-06-16 17:25:08"
+    },
+    {
+      "name": "empty_scene_v5_1_v5",
+      "target": "C:\\Users\\ghost\\Documents\\Codex\\2026-06-16\\high-quality-outdoor-living-space-featuring\\outputs\\empty_scene_v5_1.jpg",
+      "variant": 5,
+      "imageUrls": [
+        "<redacted>",
+        "<redacted>"
+      ],
+      "status": "SUCCESS",
+      "taskId": "2066813633157279746",
+      "submittedAt": "2026-06-16 17:22:24",
+      "lastQueryAt": "2026-06-16 17:25:38",
+      "usage": {
+        "consumeMoney": null,
+        "consumeCoins": null,
+        "taskCostTime": "0",
+        "thirdPartyConsumeMoney": "0.16"
+      },
+      "saved": [
+        "C:\\Users\\ghost\\Desktop\\phone\\rh100_out\\empty_scene_v5_1_v5_1.jpg"
+      ],
+      "finishedAt": "2026-06-16 17:25:39"
+    }
+  ]
+}
