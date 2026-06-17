@@ -215,34 +215,6 @@
     .thumb { width: 54px; height: 54px; border-radius: 12px; object-fit: cover; background: rgba(0,0,0,.05); flex: 0 0 auto; }
     .small-label { font-size: 10px; font-weight: 800; color: rgba(0,88,188,.56); text-transform: uppercase; letter-spacing: .08em; }
     .status { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 52vw; }
-    .save-tip {
-      position: relative;
-      overflow: hidden;
-      color: #d92d20;
-      opacity: 0;
-      transform: translateY(-2px);
-      transition: opacity .22s ease, transform .22s ease;
-    }
-    .save-tip.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .save-tip::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,.9) 45%, rgba(255,255,255,0) 70%);
-      transform: translateX(-120%);
-      opacity: 0;
-    }
-    .save-tip.show::before {
-      opacity: 1;
-      animation: shine-sweep 1.15s ease-in-out infinite;
-    }
-    @keyframes shine-sweep {
-      0% { transform: translateX(-120%); }
-      100% { transform: translateX(120%); }
-    }
     .modal-backdrop { position: fixed; inset: 0; display: none; place-items: center; background: rgba(15,23,42,.22); z-index: 80; }
     .modal-backdrop.open { display: grid; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -893,138 +865,42 @@
 
       <aside class="w-80 glass rounded-[28px] p-5 overflow-y-auto flex flex-col gap-5">
         <div id="imageSettings" class="flex flex-col gap-3">
-          <div class="flex items-center justify-between">
-            <label class="text-sm font-extrabold text-[#0058bc]">图片水印资产</label>
-            <span class="text-[10px] font-bold text-slate-500">左滑删除</span>
-          </div>
+          <label class="small-label">图片水印资产</label>
           <div id="watermarkAssetList" class="flex flex-col gap-2"></div>
-          <div class="grid grid-cols-2 gap-2">
-            <button id="uploadLogoBtn" class="dropzone rounded-2xl p-3 flex items-center justify-center gap-2">
-              <span class="material-symbols-outlined text-[#0058bc]">add_photo_alternate</span>
-              <span id="logoName" class="text-[11px] font-extrabold text-[#0058bc]">添加自定义水印</span>
-            </button>
-            <button id="textModeBtn" class="dropzone rounded-2xl p-3 flex items-center justify-center gap-2">
-              <span class="material-symbols-outlined text-[#0058bc]">text_fields</span>
-              <span class="text-[11px] font-extrabold text-[#0058bc]">文字水印</span>
-            </button>
-          </div>
+          <button id="uploadLogoBtn" class="dropzone rounded-2xl p-3 flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-[#0058bc]">add_photo_alternate</span>
+            <span id="logoName" class="text-[11px] font-extrabold text-[#0058bc]">添加自定义水印</span>
+          </button>
           <label class="small-label mt-1">已添加水印图层</label>
           <div id="watermarkList" class="flex flex-col gap-2"></div>
         </div>
 
-        <div id="textSettings" class="hidden flex-col gap-4">
-          <div class="flex items-center justify-between">
-            <label class="small-label">文字水印设计</label>
-            <button id="backToImageBtn" class="ghost-button h-9 px-3 rounded-xl text-[11px] font-extrabold flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-sm">arrow_back</span>返回图片水印
-            </button>
-          </div>
-          <div class="tile p-3 flex flex-col gap-4">
-            <div class="flex flex-col gap-1.5">
-              <div class="flex justify-between items-center">
-                <label class="text-[10px] font-extrabold text-slate-600 uppercase">文字内容</label>
-                <span class="text-[10px] font-bold text-slate-400">文字会居中显示在背景中</span>
-              </div>
-              <textarea id="textContent" rows="3" class="field resize-y min-h-[84px]" placeholder="输入要显示的文字">AI generated</textarea>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <label class="flex items-center gap-2 tile p-3">
-                <span class="material-symbols-outlined text-sm text-[#0058bc]">ink_pen</span>
-                <span class="text-[10px] font-extrabold text-slate-600 uppercase">文字颜色</span>
-                <input id="textColor" type="color" class="ml-auto w-11 h-9 p-1.5 bg-transparent border-0" value="#ffffff" />
-              </label>
-              <label class="flex items-center gap-2 tile p-3">
-                <span class="material-symbols-outlined text-sm text-[#0058bc]">wallpaper</span>
-                <span class="text-[10px] font-extrabold text-slate-600 uppercase">背景颜色</span>
-                <input id="backgroundColor" type="color" class="ml-auto w-11 h-9 p-1.5 bg-transparent border-0" value="#0058bc" />
-              </label>
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <span class="text-[10px] font-extrabold text-slate-600 uppercase">字体</span>
-              <select id="fontFamily" class="field">
-                <option value="Inter, sans-serif">Inter</option>
-                <option value="Arial, sans-serif">Arial</option>
-                <option value="Georgia, serif">Georgia</option>
-                <option value="'Times New Roman', serif">Times New Roman</option>
-                <option value="'Courier New', monospace">Courier New</option>
-                <option value="'Microsoft YaHei', sans-serif">Microsoft YaHei</option>
-              </select>
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <div class="flex justify-between items-center">
-                <label class="text-[10px] font-extrabold text-slate-600 uppercase">字号</label>
-                <span id="fontSizeValue" class="text-[10px] font-mono font-extrabold text-[#0058bc]">40px</span>
-              </div>
-              <input id="fontSize" type="range" min="6" max="80" value="40" />
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <div class="flex justify-between items-center">
-                <label class="text-[10px] font-extrabold text-slate-600 uppercase">背景大小</label>
-                <span id="backgroundPaddingValue" class="text-[10px] font-mono font-extrabold text-[#0058bc]">200px</span>
-              </div>
-              <input id="backgroundPadding" type="range" min="8" max="200" value="32" />
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <div class="flex justify-between items-center">
-                <label class="text-[10px] font-extrabold text-slate-600 uppercase">背景圆角</label>
-                <span id="backgroundRadiusValue" class="text-[10px] font-mono font-extrabold text-[#0058bc]">24px</span>
-              </div>
-              <input id="backgroundRadius" type="range" min="0" max="120" value="24" />
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <div class="flex justify-between items-center">
-                <label class="text-[10px] font-extrabold text-slate-600 uppercase">背景透明度</label>
-                <span id="backgroundOpacityValue" class="text-[10px] font-mono font-extrabold text-[#0058bc]">72%</span>
-              </div>
-              <input id="backgroundOpacity" type="range" min="0" max="100" value="72" />
-            </div>
-            <button id="addTextLayerBtn" class="primary-button rounded-2xl p-3 mt-4 flex items-center justify-center gap-2">
-              <span class="material-symbols-outlined">add_comment</span>添加文字水印图层
-            </button>
-            <button id="saveTextAsImageBtn" class="ghost-button rounded-2xl p-3 mt-3 flex items-center justify-center gap-2">
-              <span class="material-symbols-outlined">image</span>保存为图片水印
-            </button>
-            <div id="saveTextHint" class="save-tip hidden text-[11px] font-extrabold text-center leading-relaxed bg-red-50/95 border border-red-200 rounded-2xl px-3 py-2">
-              请先选中一个文字水印图层，再保存为图片水印
-            </div>
+        <div class="flex flex-col gap-2">
+          <label class="small-label">位置调整</label>
+          <div class="bg-[#0058bc]/10 text-[#0058bc] rounded-2xl px-4 py-3 text-[11px] font-extrabold leading-relaxed">
+            直接在预览图上拖动水印。切换到下一张图片时会沿用当前同一个位置。
           </div>
         </div>
 
-        <div class="flex flex-col gap-2 -mt-4">
-          <div class="flex flex-col gap-1">
-            <div class="flex justify-between items-center gap-2">
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-1.5">
+            <div class="flex justify-between items-center">
               <label class="text-[10px] font-extrabold text-slate-600 uppercase">整体不透明度</label>
-              <div class="flex items-center gap-1">
-                <span id="opacityValue" class="text-[10px] font-mono font-extrabold text-[#0058bc]">50%</span>
-                <button id="resetOpacityBtn" type="button" class="w-6 h-6 rounded-full hover:bg-white/70 grid place-items-center text-[#0058bc]" title="复位不透明度">
-                  <span class="material-symbols-outlined text-sm">restart_alt</span>
-                </button>
-              </div>
+              <span id="opacityValue" class="text-[10px] font-mono font-extrabold text-[#0058bc]">60%</span>
             </div>
-            <input id="opacity" type="range" min="0" max="100" value="50" />
+            <input id="opacity" type="range" min="0" max="100" value="60" />
           </div>
-          <div class="flex flex-col gap-1">
-            <div class="flex justify-between items-center gap-2">
+          <div class="flex flex-col gap-1.5">
+            <div class="flex justify-between items-center">
               <label class="text-[10px] font-extrabold text-slate-600 uppercase">缩放大小</label>
-              <div class="flex items-center gap-1">
-                <span id="scaleValue" class="text-[10px] font-mono font-extrabold text-[#0058bc]">100%</span>
-                <button id="resetScaleBtn" type="button" class="w-6 h-6 rounded-full hover:bg-white/70 grid place-items-center text-[#0058bc]" title="复位缩放">
-                  <span class="material-symbols-outlined text-sm">restart_alt</span>
-                </button>
-              </div>
+              <span id="scaleValue" class="text-[10px] font-mono font-extrabold text-[#0058bc]">100%</span>
             </div>
-            <input id="scale" type="range" min="20" max="300" value="100" />
-            <p class="text-[10px] text-slate-400 font-semibold">100% = 原始尺寸</p>
-            </div>
-          <div class="flex flex-col gap-1">
-            <div class="flex justify-between items-center gap-2">
+            <input id="scale" type="range" min="2" max="80" value="18" />
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <div class="flex justify-between items-center">
               <label class="text-[10px] font-extrabold text-slate-600 uppercase">旋转角度</label>
-              <div class="flex items-center gap-1">
-                <span id="rotationValue" class="text-[10px] font-mono font-extrabold text-[#0058bc]">0°</span>
-                <button id="resetRotationBtn" type="button" class="w-6 h-6 rounded-full hover:bg-white/70 grid place-items-center text-[#0058bc]" title="复位旋转">
-                  <span class="material-symbols-outlined text-sm">restart_alt</span>
-                </button>
-              </div>
+              <span id="rotationValue" class="text-[10px] font-mono font-extrabold text-[#0058bc]">0°</span>
             </div>
             <input id="rotation" type="range" min="-180" max="180" value="0" />
           </div>
@@ -1049,7 +925,7 @@
     </main>
 
     <footer class="h-10 px-9 flex items-center justify-between bg-white/18 border-t border-white/30 backdrop-blur-lg">
-      <p class="text-[11px] text-slate-500 font-semibold">版本 1.0.6 • HTML 单文件版</p>
+      <p class="text-[11px] text-slate-500 font-semibold">版本 1.0.4 • HTML 单文件版</p>
       <div class="flex items-center gap-6 text-[11px] text-slate-500">
         <span class="status" id="statusText">准备就绪</span>
         <span class="flex items-center gap-1 text-[#0058bc] font-extrabold"><span class="material-symbols-outlined text-sm">shield_check</span>本地安全处理模式已激活</span>
@@ -1092,19 +968,6 @@
     const $ = (id) => document.getElementById(id);
     const DEFAULT_WATERMARK_DATA_URL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZMAAACSCAYAAACANydwAAAACXBIWXMAAAsTAAALEwEAmpwYAAAGp2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgMTAuMC1jMDAwIDI1LkcuZDIwZTQ2NiwgMjAyNS8xMi8wOC0yMDo1MDoyMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczpzdEV2dD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlRXZlbnQjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6YmEyNjk4NjctNTZmYS03ZjQ3LThkYzgtMjY1MTdlZDM0NDAxIiB4bXBNTTpEb2N1bWVudElEPSJhZG9iZTpkb2NpZDpwaG90b3Nob3A6ZDE3MzUwMmMtYzZkZi02YzQzLWJhNmQtYmQ4YmFiNmFjNmE1IiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOmZmNzU5YmJmLTM2MmItZmQ0Ni1hNmE2LTZhYjZhMWZhNmMyZCIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjYuMTEgKFdpbmRvd3MpIiB4bXA6Q3JlYXRlRGF0ZT0iMjAyNi0wNi0xMFQxMToyOTowMSswODowMCIgeG1wOk1vZGlmeURhdGU9IjIwMjYtMDYtMTBUMTE6MzA6NDkrMDg6MDAiIHhtcDpNZXRhZGF0YURhdGU9IjIwMjYtMDYtMTBUMTE6MzA6NDkrMDg6MDAiIGRjOmZvcm1hdD0iaW1hZ2UvcG5nIiBwaG90b3Nob3A6Q29sb3JNb2RlPSIzIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6NTRGNjMwMDgzN0QwMTFGMTg1M0FFMjQxRjFFMkM3OTYiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NTRGNjMwMDkzN0QwMTFGMTg1M0FFMjQxRjFFMkM3OTYiLz4gPHhtcE1NOkhpc3Rvcnk+IDxyZGY6U2VxPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0ic2F2ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6ZGQ2MTkwNmYtMDA2NS00YzRjLThjY2UtNTM1OTc4NTU5ZWEwIiBzdEV2dDp3aGVuPSIyMDI2LTA2LTEwVDExOjMwOjQ5KzA4OjAwIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3Nob3AgMjcuNSAoV2luZG93cykiIHN0RXZ0OmNoYW5nZWQ9Ii8iLz4gPHJkZjpsaSBzdEV2dDphY3Rpb249InNhdmVkIiBzdEV2dDppbnN0YW5jZUlEPSJ4bXAuaWlkOmZmNzU5YmJmLTM2MmItZmQ0Ni1hNmE2LTZhYjZhMWZhNmMyZCIgc3RFdnQ6d2hlbj0iMjAyNi0wNi0xMFQxMTozMDo0OSswODowMCIgc3RFdnQ6c29mdHdhcmVBZ2VudD0iQWRvYmUgUGhvdG9zaG9wIDI3LjUgKFdpbmRvd3MpIiBzdEV2dDpjaGFuZ2VkPSIvIi8+IDwvcmRmOlNlcT4gPC94bXBNTTpIaXN0b3J5PiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PvJqpk0AACAASURBVHhe7d1/aFPn/jjw9+CbmRHvXaqDpe7e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';
     const DEFAULT_WATERMARK_NAME = 'AI generated watermark.png';
-    const WATERMARK_ASSET_STORAGE_KEY = 'xelias-watermark-assets-v1';
-    const DEFAULT_TEXT_WATERMARK_STYLE = {
-      text: 'AI generated',
-      textColor: '#ffffff',
-      fontFamily: 'Inter, sans-serif',
-      fontSize: 40,
-      backgroundColor: '#0058bc',
-      backgroundPadding: 32,
-      backgroundRadius: 24,
-      backgroundOpacity: 0.72,
-      fontWeight: 800,
-      lineHeight: 1.18
-    };
     const state = {
       images: [],
       selectedId: null,
@@ -1113,15 +976,12 @@
       zoom: 1,
       dragging: false,
       dragOffset: { x: 0, y: 0 },
-      pendingDrag: null,
       watermarkAssets: [],
       selectedAssetId: 'default',
       watermarks: [],
       activeWatermarkId: null,
       sourceDirHandle: null,
-      history: [],
-      panelMode: 'image',
-      textDraftStyle: { ...DEFAULT_TEXT_WATERMARK_STYLE }
+      history: []
     };
 
     const els = {
@@ -1140,37 +1000,16 @@
       guideCanvas: $('guideCanvas'),
       emptyState: $('emptyState'),
       imageSettings: $('imageSettings'),
-      textSettings: $('textSettings'),
       uploadLogoBtn: $('uploadLogoBtn'),
-      textModeBtn: $('textModeBtn'),
-      backToImageBtn: $('backToImageBtn'),
-      addTextLayerBtn: $('addTextLayerBtn'),
-      saveTextAsImageBtn: $('saveTextAsImageBtn'),
       logoName: $('logoName'),
       watermarkAssetList: $('watermarkAssetList'),
       watermarkList: $('watermarkList'),
       opacity: $('opacity'),
       opacityValue: $('opacityValue'),
-      resetOpacityBtn: $('resetOpacityBtn'),
       scale: $('scale'),
       scaleValue: $('scaleValue'),
-      resetScaleBtn: $('resetScaleBtn'),
       rotation: $('rotation'),
       rotationValue: $('rotationValue'),
-      resetRotationBtn: $('resetRotationBtn'),
-      textContent: $('textContent'),
-      textColor: $('textColor'),
-      backgroundColor: $('backgroundColor'),
-      fontFamily: $('fontFamily'),
-      fontSize: $('fontSize'),
-      fontSizeValue: $('fontSizeValue'),
-      backgroundPadding: $('backgroundPadding'),
-      backgroundPaddingValue: $('backgroundPaddingValue'),
-      backgroundRadius: $('backgroundRadius'),
-      backgroundRadiusValue: $('backgroundRadiusValue'),
-      backgroundOpacity: $('backgroundOpacity'),
-      backgroundOpacityValue: $('backgroundOpacityValue'),
-      saveTextHint: $('saveTextHint'),
       zoomOutBtn: $('zoomOutBtn'),
       zoomInBtn: $('zoomInBtn'),
       zoomLabel: $('zoomLabel'),
@@ -1308,138 +1147,9 @@
       return item.name;
     }
 
-    function cloneTextStyle(style = {}) {
-      return {
-        ...DEFAULT_TEXT_WATERMARK_STYLE,
-        ...style
-      };
-    }
-
-    function cloneAssetForStorage(asset) {
-      return {
-        id: asset.id,
-        name: asset.name,
-        url: asset.url,
-        builtIn: Boolean(asset.builtIn),
-        visibleBounds: asset.visibleBounds || null
-      };
-    }
-
-    function persistWatermarkAssets() {
-      const payload = state.watermarkAssets
-        .filter(asset => !asset.builtIn)
-        .map(cloneAssetForStorage);
-      localStorage.setItem(WATERMARK_ASSET_STORAGE_KEY, JSON.stringify(payload));
-    }
-
-    function hydrateStoredWatermarkAssets() {
-      try {
-        const raw = localStorage.getItem(WATERMARK_ASSET_STORAGE_KEY);
-        if (!raw) return [];
-        const parsed = JSON.parse(raw);
-        if (!Array.isArray(parsed)) return [];
-        return parsed.filter(asset => asset?.url && asset?.name).map(asset => ({
-          id: asset.id || crypto.randomUUID(),
-          name: asset.name,
-          url: asset.url,
-          builtIn: false,
-          visibleBounds: asset.visibleBounds || null
-        }));
-      } catch {
-        return [];
-      }
-    }
-
-    async function ensureAssetImage(asset) {
-      if (asset?.img) return asset.img;
-      if (!asset?.url) return null;
-      const img = await loadImageFromUrl(asset.url);
-      asset.img = img;
-      return img;
-    }
-
-    function measureTextWatermark(style = {}) {
-      const merged = cloneTextStyle(style);
-      const lines = String(merged.text || 'Text').split(/\r?\n/).map(line => line || ' ');
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      ctx.font = `${merged.fontWeight} ${merged.fontSize}px ${merged.fontFamily}`;
-      const widths = lines.map(line => ctx.measureText(line).width);
-      const maxWidth = Math.max(1, ...widths);
-      const lineHeightPx = merged.fontSize * merged.lineHeight;
-      const textHeight = lineHeightPx * lines.length;
-      return {
-        ...merged,
-        lines,
-        lineHeightPx,
-        width: Math.ceil(maxWidth + merged.backgroundPadding * 2),
-        height: Math.ceil(textHeight + merged.backgroundPadding * 2)
-      };
-    }
-
-    function escapeHtml(value = '') {
-      return String(value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
-
-    function textPreviewDataUrl(style = {}) {
-      const layout = measureTextWatermark(style);
-      const width = Math.max(180, layout.width);
-      const height = Math.max(78, layout.height);
-      const rectX = Math.round((width - layout.width) / 2);
-      const rectY = Math.round((height - layout.height) / 2);
-      const startY = rectY + layout.backgroundPadding + layout.fontSize;
-      const lines = layout.lines.map((line, index) => {
-        const y = Math.round(startY + index * layout.lineHeightPx);
-        return `<text x="${width / 2}" y="${y}" text-anchor="middle" font-family="${escapeHtml(layout.fontFamily)}" font-size="${layout.fontSize}" font-weight="${layout.fontWeight}" fill="${layout.textColor}">${escapeHtml(line)}</text>`;
-      }).join('');
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect x="${rectX}" y="${rectY}" width="${layout.width}" height="${layout.height}" rx="${Math.min(layout.backgroundRadius, layout.height / 2)}" fill="${layout.backgroundColor}" fill-opacity="${layout.backgroundOpacity}" />${lines}</svg>`;
-      return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-    }
-
-    async function textWatermarkToPngDataUrl(style = {}) {
-      const layout = measureTextWatermark(style);
-      const scale = 2;
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.max(180, layout.width) * scale;
-      canvas.height = Math.max(78, layout.height) * scale;
-      const ctx = canvas.getContext('2d');
-      ctx.scale(scale, scale);
-      const scaledWidth = canvas.width / scale;
-      const scaledHeight = canvas.height / scale;
-      const rectX = Math.round((scaledWidth - layout.width) / 2);
-      const rectY = Math.round((scaledHeight - layout.height) / 2);
-      ctx.fillStyle = layout.backgroundColor;
-      ctx.globalAlpha = layout.backgroundOpacity;
-      roundedRectPath(ctx, rectX, rectY, layout.width, layout.height, layout.backgroundRadius);
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = layout.textColor;
-      ctx.font = `${layout.fontWeight} ${layout.fontSize}px ${layout.fontFamily}`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'alphabetic';
-      const startY = rectY + layout.backgroundPadding + layout.fontSize;
-      layout.lines.forEach((line, index) => {
-        ctx.fillText(line, scaledWidth / 2, startY + index * layout.lineHeightPx);
-      });
-      return canvas.toDataURL('image/png');
-    }
-
-    function activeTextWatermark() {
-      const wm = activeWatermark();
-      return wm?.type === 'text' ? wm : null;
-    }
-
     function snapshotSettings() {
       return {
-        watermarks: state.watermarks.map(wm => ({
-          ...wm,
-          textStyle: wm.textStyle ? { ...wm.textStyle } : undefined
-        }))
+        watermarks: state.watermarks.map(wm => ({ ...wm }))
       };
     }
 
@@ -1503,8 +1213,7 @@
             <span class="material-symbols-outlined text-sm">close</span>
           </button>
         `;
-        card.onclick = event => {
-          if (event.target.closest('.remove-image')) return;
+        card.querySelector('.select-image').onclick = () => {
           applySettingsToSelected();
           state.selectedId = item.id;
           renderList();
@@ -1521,53 +1230,16 @@
 
     function loadSettings(settings) {
       state.custom = true;
-      state.watermarks = (settings.watermarks || []).map(wm => ({
-        ...wm,
-        scale: wm.type === 'text' && (wm.scale == null || wm.scale < .5) ? 1 : wm.scale,
-        textStyle: wm.textStyle ? cloneTextStyle(wm.textStyle) : undefined
-      }));
+      state.watermarks = (settings.watermarks || []).map(wm => ({ ...wm }));
       state.activeWatermarkId = state.watermarks[0]?.id || null;
       loadActiveWatermarkControls();
       updateLabels();
-    }
-
-    function syncTextControls(style = state.textDraftStyle) {
-      const nextStyle = cloneTextStyle(style);
-      els.textContent.value = nextStyle.text;
-      els.textColor.value = nextStyle.textColor;
-      els.backgroundColor.value = nextStyle.backgroundColor;
-      els.fontFamily.value = nextStyle.fontFamily;
-      els.fontSize.value = Math.round(nextStyle.fontSize);
-      els.backgroundPadding.value = Math.round(nextStyle.backgroundPadding);
-      els.backgroundRadius.value = Math.round(nextStyle.backgroundRadius);
-      els.backgroundOpacity.value = Math.round(nextStyle.backgroundOpacity * 100);
-    }
-
-    function selectedTextWatermark() {
-      const wm = activeWatermark();
-      return wm?.type === 'text' ? wm : null;
-    }
-
-    function setPanelMode(mode) {
-      state.panelMode = mode;
-      const isText = mode === 'text';
-      els.imageSettings.classList.toggle('hidden', isText);
-      els.textSettings.classList.toggle('hidden', !isText);
-      els.textSettings.classList.toggle('flex', isText);
-      if (isText) {
-        const wm = selectedTextWatermark();
-        syncTextControls(wm?.textStyle || state.textDraftStyle);
-      }
     }
 
     function updateLabels() {
       els.opacityValue.textContent = `${els.opacity.value}%`;
       els.scaleValue.textContent = `${els.scale.value}%`;
       els.rotationValue.textContent = `${els.rotation.value}°`;
-      els.fontSizeValue.textContent = `${els.fontSize.value}px`;
-      els.backgroundPaddingValue.textContent = `${els.backgroundPadding.value}px`;
-      els.backgroundRadiusValue.textContent = `${els.backgroundRadius.value}px`;
-      els.backgroundOpacityValue.textContent = `${els.backgroundOpacity.value}%`;
       els.zoomLabel.textContent = `${Math.round(state.zoom * 100)}%`;
       const canvasWidth = els.previewCanvas.width || 0;
       const canvasHeight = els.previewCanvas.height || 0;
@@ -1581,15 +1253,6 @@
           canvas.style.height = `${displayHeight}px`;
         });
       }
-    }
-
-    function centerPreviewStage() {
-      requestAnimationFrame(() => {
-        const stage = els.canvasStack?.parentElement?.parentElement;
-        if (!stage) return;
-        stage.scrollLeft = Math.max(0, (stage.scrollWidth - stage.clientWidth) / 2);
-        stage.scrollTop = Math.max(0, (stage.scrollHeight - stage.clientHeight) / 2);
-      });
     }
 
     function activeWatermark() {
@@ -1607,14 +1270,9 @@
         els.scale.value = Math.round(wm.scale * 100);
         els.rotation.value = wm.rotation;
       } else {
-        els.opacity.value = 50;
-        els.scale.value = 100;
+        els.opacity.value = 100;
+        els.scale.value = 18;
         els.rotation.value = 0;
-      }
-      if (wm?.type === 'text') {
-        syncTextControls(wm.textStyle);
-      } else if (state.panelMode === 'text') {
-        syncTextControls(state.textDraftStyle);
       }
       updateLabels();
       renderWatermarkList();
@@ -1626,41 +1284,6 @@
       wm.opacity = Number(els.opacity.value || 100) / 100;
       wm.scale = Number(els.scale.value || 100) / 100;
       wm.rotation = Number(els.rotation.value || 0);
-      if (wm.type === 'text') {
-        wm.textStyle = cloneTextStyle({
-          ...wm.textStyle,
-          text: els.textContent.value || ' ',
-          textColor: els.textColor.value,
-          backgroundColor: els.backgroundColor.value,
-          fontFamily: els.fontFamily.value || DEFAULT_TEXT_WATERMARK_STYLE.fontFamily,
-          fontSize: Number(els.fontSize.value || DEFAULT_TEXT_WATERMARK_STYLE.fontSize),
-          backgroundPadding: Number(els.backgroundPadding.value || DEFAULT_TEXT_WATERMARK_STYLE.backgroundPadding),
-          backgroundRadius: Number(els.backgroundRadius.value || DEFAULT_TEXT_WATERMARK_STYLE.backgroundRadius),
-          backgroundOpacity: Number(els.backgroundOpacity.value || 100) / 100
-        });
-        wm.url = textPreviewDataUrl(wm.textStyle);
-      }
-      applySettingsToSelected();
-    }
-
-    function updateSelectedTextWatermarkFromControls() {
-      const wm = selectedTextWatermark();
-      if (!wm) {
-        updateTextDraftFromControls();
-        return;
-      }
-      wm.textStyle = cloneTextStyle({
-        ...wm.textStyle,
-        text: els.textContent.value || ' ',
-        textColor: els.textColor.value,
-        backgroundColor: els.backgroundColor.value,
-        fontFamily: els.fontFamily.value || DEFAULT_TEXT_WATERMARK_STYLE.fontFamily,
-        fontSize: Number(els.fontSize.value || DEFAULT_TEXT_WATERMARK_STYLE.fontSize),
-        backgroundPadding: Number(els.backgroundPadding.value || DEFAULT_TEXT_WATERMARK_STYLE.backgroundPadding),
-        backgroundRadius: Number(els.backgroundRadius.value || DEFAULT_TEXT_WATERMARK_STYLE.backgroundRadius),
-        backgroundOpacity: Number(els.backgroundOpacity.value || 100) / 100
-      });
-      wm.url = textPreviewDataUrl(wm.textStyle);
       applySettingsToSelected();
     }
 
@@ -1676,25 +1299,8 @@
     }
 
     function watermarkMetrics(wm, baseW) {
-      if (wm.type === 'text') {
-        const layout = measureTextWatermark(wm.textStyle);
-        const scale = Math.max(.2, (wm.scale ?? 1));
-        const width = Math.max(12, layout.width * scale);
-        const height = Math.max(12, layout.height * scale);
-        return {
-          width,
-          height,
-          visibleLeft: 0,
-          visibleTop: 0,
-          visibleRight: width,
-          visibleBottom: height,
-          visibleWidth: width,
-          visibleHeight: height
-        };
-      }
-      const scale = Math.max(.2, (wm.scale ?? 1));
-      const width = Math.max(12, (wm.img?.width || baseW) * scale);
-      const height = Math.max(12, (wm.img?.height || baseW) * scale);
+      const width = Math.max(12, baseW * wm.scale);
+      const height = width * (wm.img.height / wm.img.width);
       const bounds = wm.visibleBounds || { left: 0, top: 0, right: 1, bottom: 1 };
       return {
         width,
@@ -1743,6 +1349,7 @@
     }
 
     function drawWatermark(ctx, wm, baseW, baseH) {
+      if (!wm?.img) return;
       const metrics = watermarkMetrics(wm, baseW);
       const point = freePositionPoint(wm, metrics, baseW, baseH);
       const cx = point.x + metrics.width / 2;
@@ -1752,31 +1359,7 @@
       ctx.translate(cx, cy);
       ctx.rotate(wm.rotation * Math.PI / 180);
       ctx.translate(-metrics.width / 2, -metrics.height / 2);
-      if (wm.type === 'text') {
-        const layout = measureTextWatermark(wm.textStyle);
-        const scaleFactor = Math.max(.2, wm.scale ?? 1);
-        ctx.scale(scaleFactor, scaleFactor);
-        ctx.globalAlpha = wm.opacity * wm.textStyle.backgroundOpacity;
-        ctx.fillStyle = wm.textStyle.backgroundColor;
-        roundedRectPath(ctx, 0, 0, layout.width, layout.height, wm.textStyle.backgroundRadius);
-        ctx.fill();
-        ctx.globalAlpha = wm.opacity;
-        ctx.fillStyle = wm.textStyle.textColor;
-        ctx.font = `${wm.textStyle.fontWeight} ${wm.textStyle.fontSize}px ${wm.textStyle.fontFamily}`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'alphabetic';
-        const startY = wm.textStyle.backgroundPadding + wm.textStyle.fontSize;
-        layout.lines.forEach((line, index) => {
-          ctx.fillText(line, layout.width / 2, startY + index * layout.lineHeightPx);
-        });
-      } else if (wm?.img) {
-        const bounds = wm.visibleBounds || { left: 0, top: 0, right: 1, bottom: 1 };
-        const sourceX = Math.round(wm.img.width * bounds.left);
-        const sourceY = Math.round(wm.img.height * bounds.top);
-        const sourceW = Math.max(1, Math.round(wm.img.width * (bounds.right - bounds.left)));
-        const sourceH = Math.max(1, Math.round(wm.img.height * (bounds.bottom - bounds.top)));
-        ctx.drawImage(wm.img, sourceX, sourceY, sourceW, sourceH, 0, 0, metrics.width, metrics.height);
-      }
+      ctx.drawImage(wm.img, 0, 0, metrics.width, metrics.height);
       ctx.restore();
     }
 
@@ -1817,7 +1400,7 @@
       }
       els.emptyState.classList.add('hidden');
       els.canvasStack.classList.remove('hidden');
-      renderCanvasTo(els.previewCanvas, item, item.settings, null);
+      renderCanvasTo(els.previewCanvas, item, item.settings, 1200);
       if (!state.dragging) clearGuides();
       updateLabels();
       updateFileMeta();
@@ -2054,7 +1637,7 @@
           <img src="${wm.url}" class="w-9 h-9 rounded-lg object-contain bg-white/50" alt="">
           <button class="select-wm flex-1 min-w-0 text-left" type="button">
             <p class="text-[11px] font-extrabold truncate">${wm.name || `水印 ${index + 1}`}</p>
-            <p class="text-[10px] text-slate-500">${wm.type === 'text' ? '文字背景 / 居中排版 / 拖拽对齐' : '单独位置 / 大小 / 透明度'}</p>
+            <p class="text-[10px] text-slate-500">单独位置 / 大小 / 透明度</p>
           </button>
           <button class="remove-wm w-8 h-8 rounded-lg hover:bg-white/70 grid place-items-center text-slate-500" type="button" title="删除">
             <span class="material-symbols-outlined text-sm">close</span>
@@ -2095,50 +1678,38 @@
       state.watermarkAssets.forEach(asset => {
         const row = document.createElement('button');
         row.type = 'button';
-        row.className = `asset-row tile p-2 flex items-center gap-2 text-left relative overflow-hidden ${asset.id === state.selectedAssetId ? 'active' : ''}`;
+        row.className = `tile p-2 flex items-center gap-2 text-left ${asset.id === state.selectedAssetId ? 'active' : ''}`;
         row.innerHTML = `
-          <div class="asset-main flex items-center gap-2 flex-1 min-w-0 transition-transform duration-200">
-            <span class="w-7 h-7 rounded-lg bg-white/40 grid place-items-center text-[#0058bc]">
-              <span class="material-symbols-outlined text-sm">${asset.builtIn ? 'verified' : 'image'}</span>
-            </span>
-            <img src="${asset.url}" class="w-10 h-9 rounded-lg object-contain bg-white/50" alt="">
-            <span class="flex-1 min-w-0">
-              <span class="block text-[12px] font-extrabold truncate">${asset.name}</span>
-              <span class="block text-[10px] text-slate-500">${asset.builtIn ? '默认内置，可重复添加' : '自定义水印，可重复添加'}</span>
-            </span>
-          </div>
-          <div class="asset-delete absolute inset-y-0 right-0 w-16 rounded-r-2xl bg-red-500 text-white grid place-items-center opacity-0 transition-opacity duration-200">
-            <span class="material-symbols-outlined text-sm">delete</span>
-          </div>
+          <span class="w-7 h-7 rounded-lg bg-white/40 grid place-items-center text-[#0058bc]">
+            <span class="material-symbols-outlined text-sm">${asset.builtIn ? 'verified' : 'image'}</span>
+          </span>
+          <img src="${asset.url}" class="w-10 h-9 rounded-lg object-contain bg-white/50" alt="">
+          <span class="flex-1 min-w-0">
+            <span class="block text-[11px] font-extrabold truncate">${asset.name}</span>
+            <span class="block text-[10px] text-slate-500">${asset.builtIn ? '默认内置，可重复添加' : '自定义水印，可重复添加'}</span>
+          </span>
         `;
-        row.dataset.assetId = asset.id;
+        row.onclick = () => addWatermarkFromAsset(asset.id);
         els.watermarkAssetList.appendChild(row);
-        attachAssetSwipeDelete(row, asset.id);
       });
     }
 
-    async function addWatermarkFromAsset(assetId) {
+    function addWatermarkFromAsset(assetId) {
       const asset = state.watermarkAssets.find(item => item.id === assetId);
       if (!asset) return;
-      const img = await ensureAssetImage(asset);
-      if (!img) {
-        setStatus(`水印资产加载失败：${asset.name}`);
-        return;
-      }
       state.selectedAssetId = asset.id;
       const sameCount = state.watermarks.filter(wm => wm.assetId === asset.id).length;
       const wm = {
         id: crypto.randomUUID(),
         assetId: asset.id,
         name: sameCount ? `${asset.name} #${sameCount + 1}` : asset.name,
-        type: 'image',
-        img,
+        img: asset.img,
         url: asset.url,
         visibleBounds: asset.visibleBounds,
         x: .5,
         y: .5,
-        opacity: 0.5,
-        scale: 1,
+        opacity: 1,
+        scale: .18,
         rotation: 0
       };
       state.watermarks.push(wm);
@@ -2151,126 +1722,6 @@
       setStatus(`已添加水印图层：${asset.name}`);
     }
 
-    async function saveCurrentTextWatermarkAsAsset() {
-      const wm = selectedTextWatermark();
-      if (!wm) {
-        setStatus('请先选中一个文字水印图层');
-        showSaveTextHint('请先选中一个文字水印图层，再保存为图片水印');
-        return;
-      }
-      const dataUrl = await textWatermarkToPngDataUrl(wm.textStyle);
-      const img = await loadImageFromUrl(dataUrl);
-      const asset = {
-        id: crypto.randomUUID(),
-        name: `${wm.name || '文字水印'}-图片化`,
-        img,
-        url: dataUrl,
-        visibleBounds: measureVisibleBounds(img),
-        builtIn: false
-      };
-      state.watermarkAssets.push(asset);
-      persistWatermarkAssets();
-      renderWatermarkAssets();
-      if (els.saveTextHint) {
-        els.saveTextHint.classList.remove('show');
-        els.saveTextHint.classList.add('hidden');
-      }
-      setStatus(`已保存为图片水印资产：${asset.name}`);
-    }
-
-    function deleteWatermarkAsset(assetId) {
-      const index = state.watermarkAssets.findIndex(asset => asset.id === assetId);
-      if (index === -1) return;
-      const asset = state.watermarkAssets[index];
-      if (asset.builtIn) {
-        setStatus('内置水印不能删除');
-        return;
-      }
-      state.watermarkAssets.splice(index, 1);
-      if (state.selectedAssetId === assetId) {
-        state.selectedAssetId = state.watermarkAssets[0]?.id || null;
-      }
-      persistWatermarkAssets();
-      renderWatermarkAssets();
-      setStatus(`已删除水印资产：${asset.name}`);
-    }
-
-    function attachAssetSwipeDelete(row, assetId) {
-      const main = row.querySelector('.asset-main');
-      const deleteZone = row.querySelector('.asset-delete');
-      let startX = 0;
-      let startY = 0;
-      let currentX = 0;
-      let dragging = false;
-      let moved = false;
-      let revealed = false;
-
-      const setReveal = (value) => {
-        revealed = value;
-        main.style.transform = value ? 'translateX(-64px)' : 'translateX(0)';
-        deleteZone.style.opacity = value ? '1' : '0';
-        deleteZone.style.pointerEvents = value ? 'auto' : 'none';
-      };
-
-      row.addEventListener('pointerdown', event => {
-        if (event.target.closest('.asset-delete')) {
-          deleteWatermarkAsset(assetId);
-          return;
-        }
-        startX = event.clientX;
-        startY = event.clientY;
-        currentX = 0;
-        moved = false;
-        dragging = true;
-        row.setPointerCapture(event.pointerId);
-      });
-
-      row.addEventListener('pointermove', event => {
-        if (!dragging) return;
-        const dx = event.clientX - startX;
-        const dy = event.clientY - startY;
-        if (Math.abs(dx) > 6 || Math.abs(dy) > 6) moved = true;
-        if (!revealed && Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 8) {
-          dragging = false;
-          setReveal(false);
-          return;
-        }
-        currentX = Math.min(0, Math.max(-72, dx));
-        main.style.transform = `translateX(${currentX}px)`;
-        deleteZone.style.opacity = currentX < -20 ? '1' : '0';
-      });
-
-      const endDrag = () => {
-        if (!dragging) return;
-        dragging = false;
-        const shouldReveal = currentX < -40;
-        setReveal(shouldReveal);
-        if (!shouldReveal) {
-          main.style.transform = 'translateX(0)';
-          deleteZone.style.opacity = '0';
-          deleteZone.style.pointerEvents = 'none';
-          revealed = false;
-        }
-      };
-
-      row.addEventListener('pointerup', endDrag);
-      row.addEventListener('pointercancel', endDrag);
-      row.addEventListener('click', event => {
-        if (event.target.closest('.asset-delete')) return;
-        if (dragging || moved) return;
-        if (revealed) {
-          return;
-        }
-        addWatermarkFromAsset(assetId);
-      });
-    }
-
-    function initializeWatermarkAssets() {
-      const storedAssets = hydrateStoredWatermarkAssets();
-      state.watermarkAssets = state.watermarkAssets.filter(asset => asset.builtIn);
-      storedAssets.forEach(asset => state.watermarkAssets.push(asset));
-    }
-
     function duplicateWatermark(id, options = {}) {
       const source = state.watermarks.find(wm => wm.id === id);
       if (!source) return;
@@ -2278,15 +1729,11 @@
       const offset = options.offset === false ? 0 : .04;
       const copy = {
         ...source,
-        textStyle: source.textStyle ? { ...source.textStyle } : undefined,
         id: crypto.randomUUID(),
         name: `${source.name} #${copyIndex}`,
         x: Math.min(.96, source.x + offset),
         y: Math.min(.96, source.y + offset)
       };
-      if (copy.type === 'text') {
-        copy.url = textPreviewDataUrl(copy.textStyle);
-      }
       state.watermarks.push(copy);
       state.activeWatermarkId = copy.id;
       els.logoName.textContent = `已添加 ${state.watermarks.length} 个水印`;
@@ -2299,18 +1746,6 @@
 
     function setStatus(text) {
       els.statusText.textContent = text;
-    }
-
-    function showSaveTextHint(text) {
-      if (!els.saveTextHint) return;
-      els.saveTextHint.textContent = text;
-      els.saveTextHint.classList.remove('hidden');
-      els.saveTextHint.classList.add('show');
-      clearTimeout(state.saveHintTimer);
-      state.saveHintTimer = setTimeout(() => {
-        els.saveTextHint.classList.remove('show');
-        setTimeout(() => els.saveTextHint.classList.add('hidden'), 220);
-      }, 2600);
     }
 
     function showExportToast(text) {
@@ -2541,7 +1976,6 @@
         builtIn: false
       };
       state.watermarkAssets.push(asset);
-      persistWatermarkAssets();
       addWatermarkFromAsset(asset.id);
       setStatus(`已添加自定义水印：${file.name}`);
     }
@@ -2559,50 +1993,12 @@
           builtIn: true
         };
         state.watermarkAssets.push(asset);
+        renderWatermarkAssets();
         if (!state.watermarks.length) addWatermarkFromAsset(asset.id);
       } catch (error) {
         console.warn(error);
         setStatus('默认水印加载失败，可手动添加水印');
       }
-    }
-
-    function updateTextDraftFromControls() {
-      state.textDraftStyle = cloneTextStyle({
-        ...state.textDraftStyle,
-        text: els.textContent.value || ' ',
-        textColor: els.textColor.value,
-        backgroundColor: els.backgroundColor.value,
-        fontFamily: els.fontFamily.value || DEFAULT_TEXT_WATERMARK_STYLE.fontFamily,
-        fontSize: Number(els.fontSize.value || DEFAULT_TEXT_WATERMARK_STYLE.fontSize),
-        backgroundPadding: Number(els.backgroundPadding.value || DEFAULT_TEXT_WATERMARK_STYLE.backgroundPadding),
-        backgroundRadius: Number(els.backgroundRadius.value || DEFAULT_TEXT_WATERMARK_STYLE.backgroundRadius),
-        backgroundOpacity: Number(els.backgroundOpacity.value || 100) / 100
-      });
-    }
-
-    function addTextWatermarkLayer() {
-      updateTextDraftFromControls();
-      const sameCount = state.watermarks.filter(wm => wm.type === 'text').length;
-      const wm = {
-        id: crypto.randomUUID(),
-        assetId: 'text-layer',
-        name: sameCount ? `文字水印 #${sameCount + 1}` : '文字水印',
-        type: 'text',
-        url: textPreviewDataUrl(state.textDraftStyle),
-        textStyle: { ...state.textDraftStyle },
-        x: .5,
-        y: .5,
-        opacity: 0.5,
-        scale: 1,
-        rotation: 0
-      };
-      state.watermarks.push(wm);
-      state.activeWatermarkId = wm.id;
-      loadActiveWatermarkControls();
-      applySettingsToSelected();
-      renderPreview();
-      renderWatermarkList();
-      setStatus(`已添加文字水印图层：${wm.name}`);
     }
 
     function bindDropzone(element, handler) {
@@ -2664,51 +2060,11 @@
         }
       });
       [els.opacity, els.scale, els.rotation].forEach(el => el.addEventListener('input', () => {
-        if (!state.dragging) {
-          clearGuides();
-        }
         updateActiveWatermarkFromControls();
         updateLabels();
         renderWatermarkList();
         renderPreview();
       }));
-      els.resetOpacityBtn.onclick = () => {
-        els.opacity.value = 50;
-        updateActiveWatermarkFromControls();
-        updateLabels();
-        renderWatermarkList();
-        renderPreview();
-      };
-      els.resetScaleBtn.onclick = () => {
-        els.scale.value = 100;
-        updateActiveWatermarkFromControls();
-        updateLabels();
-        renderWatermarkList();
-        renderPreview();
-      };
-      els.resetRotationBtn.onclick = () => {
-        els.rotation.value = 0;
-        updateActiveWatermarkFromControls();
-        updateLabels();
-        renderWatermarkList();
-        renderPreview();
-      };
-      [els.textContent, els.textColor, els.backgroundColor, els.fontFamily, els.fontSize, els.backgroundPadding, els.backgroundRadius, els.backgroundOpacity].forEach(el => el.addEventListener('input', () => {
-        updateSelectedTextWatermarkFromControls();
-        updateLabels();
-        renderWatermarkList();
-        renderPreview();
-      }));
-      els.textModeBtn.onclick = () => {
-        setPanelMode('text');
-        updateLabels();
-      };
-      els.backToImageBtn.onclick = () => {
-        setPanelMode('image');
-        updateLabels();
-      };
-      els.addTextLayerBtn.onclick = addTextWatermarkLayer;
-      els.saveTextAsImageBtn.onclick = saveCurrentTextWatermarkAsAsset;
       els.exportAllBtn.onclick = exportAll;
       els.exportCurrentBtn.onclick = exportCurrent;
       els.closeModalBtn.onclick = () => els.exportModal.classList.remove('open');
@@ -2732,33 +2088,25 @@
           clearGuides();
           return;
         }
-        state.pendingDrag = {
-          pointerId: e.pointerId,
-          startX: point.x,
-          startY: point.y,
-          hitId: hit.id,
-          dragTarget: e.altKey ? (duplicateWatermark(hit.id, { offset: false }) || hit) : hit
-        };
-        if (!e.altKey) {
+        let dragTarget = hit;
+        if (e.altKey) {
+          dragTarget = duplicateWatermark(hit.id, { offset: false }) || hit;
+        } else {
           state.activeWatermarkId = hit.id;
-          loadActiveWatermarkControls();
         }
+        loadActiveWatermarkControls();
+        state.dragging = true;
         els.previewCanvas.setPointerCapture(e.pointerId);
+        const wm = dragTarget;
+        state.dragOffset = { x: point.x - wm.x, y: point.y - wm.y };
+        const centerPoint = { x: point.x - state.dragOffset.x, y: point.y - state.dragOffset.y };
+        const snapped = snapWatermarkToGuides(wm, centerPoint);
+        Object.assign(wm, { x: snapped.x, y: snapped.y });
+        updateActiveWatermarkFromControls();
+        renderPreview();
+        drawGuides(snapped.guides);
       });
       els.previewCanvas.addEventListener('pointermove', e => {
-        if (state.pendingDrag && !state.dragging) {
-          const movePoint = canvasPointFromEvent(e);
-          const dx = movePoint.x - state.pendingDrag.startX;
-          const dy = movePoint.y - state.pendingDrag.startY;
-          if (Math.hypot(dx, dy) < 0.008) return;
-          state.dragging = true;
-          state.dragOffset = {
-            x: state.pendingDrag.startX - state.pendingDrag.dragTarget.x,
-            y: state.pendingDrag.startY - state.pendingDrag.dragTarget.y
-          };
-          state.activeWatermarkId = state.pendingDrag.dragTarget.id;
-          loadActiveWatermarkControls();
-        }
         if (!state.dragging) return;
         const point = canvasPointFromEvent(e);
         const centerPoint = {
@@ -2775,13 +2123,6 @@
       els.previewCanvas.addEventListener('pointerup', () => {
         state.dragging = false;
         state.dragOffset = { x: 0, y: 0 };
-        state.pendingDrag = null;
-        clearGuides();
-      });
-      els.previewCanvas.addEventListener('pointercancel', () => {
-        state.dragging = false;
-        state.dragOffset = { x: 0, y: 0 };
-        state.pendingDrag = null;
         clearGuides();
       });
       window.addEventListener('keydown', e => {
@@ -2795,9 +2136,7 @@
     async function init() {
       updateLabels();
       bindEvents();
-      initializeWatermarkAssets();
       await addDefaultWatermark();
-      setPanelMode('image');
       renderWatermarkAssets();
       renderPreview();
       renderWatermarkList();
