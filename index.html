@@ -181,9 +181,16 @@
       transition: .18s ease;
     }
     .dropzone.dragging { border-color: var(--primary-2); background: rgba(0,184,255,.14); box-shadow: 0 0 0 4px rgba(0,184,255,.12), inset 0 0 28px rgba(255,255,255,.72); }
+    .electron-only { display: none; }
+    body.electron-mode .electron-only { display: flex; }
     .preview-stage {
       min-height: 0;
       overflow: auto;
+      cursor: default;
+    }
+    .preview-stage.viewport-panning {
+      cursor: grabbing;
+      user-select: none;
     }
     .preview-center {
       width: max-content;
@@ -305,12 +312,22 @@
       box-shadow: inset 0 1px 1px rgba(255,255,255,.48), inset 0 -16px 26px rgba(0,52,150,.24), 0 18px 42px rgba(0,114,245,.34), 0 0 32px rgba(3,187,255,.28);
     }
     #sampleBtn,
-    #actualSizeBtn {
+    .zoom-preset {
       box-shadow: inset 1px 1px 0 rgba(255,255,255,.72), 0 7px 18px rgba(22,94,160,.08);
     }
-    #actualSizeBtn {
-      min-width: 92px;
-      white-space: nowrap;
+    .zoom-preset {
+      flex: 1 1 0;
+      height: 36px;
+      border-radius: 12px;
+      color: rgba(49, 93, 150, .82);
+      font-size: 11px;
+      font-weight: 800;
+      transition: .16s ease;
+    }
+    .zoom-preset.active {
+      color: #0058bc;
+      background: rgba(255,255,255,.82);
+      box-shadow: inset 1px 1px 0 rgba(255,255,255,.98), 0 8px 20px rgba(22,94,160,.14);
     }
     @media (max-width: 1050px) {
       body { overflow: auto; }
@@ -440,8 +457,7 @@
     .small-label,
     #opacityValue,
     #scaleValue,
-    #rotationValue,
-    #zoomLabel {
+    #rotationValue {
       color: rgba(0, 86, 188, .82) !important;
     }
     ::-webkit-scrollbar-thumb {
@@ -543,8 +559,7 @@
     .small-label,
     #opacityValue,
     #scaleValue,
-    #rotationValue,
-    #zoomLabel {
+    #rotationValue {
       color: rgba(49, 93, 150, .78) !important;
     }
     input[type="range"] {
@@ -859,8 +874,12 @@
         </div>
         <div id="dropzone" class="dropzone m-3 rounded-2xl p-4 text-center cursor-pointer">
           <span class="material-symbols-outlined text-[#0058bc] text-2xl">drive_folder_upload</span>
-          <p class="text-xs font-extrabold text-[#0058bc] mt-1">点击导入原图片文件夹</p>
-          <p class="text-[10px] text-slate-500 mt-1">需要文件夹授权，导出才能覆盖源文件</p>
+          <p class="text-xs font-extrabold text-[#0058bc] mt-1">点击或拖入原图片文件夹</p>
+          <p class="text-[10px] text-slate-500 mt-1">Electron 支持直接拖入，浏览器需选择授权</p>
+        </div>
+        <div class="electron-only px-3 pb-3 gap-2">
+          <input id="folderPathInput" class="field h-10 min-w-0" type="text" placeholder="粘贴文件夹路径，例如 C:\Images" />
+          <button id="loadFolderPathBtn" class="ghost-button h-10 px-3 rounded-xl text-[11px] font-extrabold whitespace-nowrap">读取路径</button>
         </div>
         <div id="imageList" class="flex-1 overflow-y-auto px-3 pb-3 flex flex-col gap-3"></div>
         <div class="p-4 border-t border-white/40 text-center">
@@ -925,7 +944,8 @@
                 <label class="text-[10px] font-extrabold text-slate-600 uppercase">文字内容</label>
                 <span class="text-[10px] font-bold text-slate-400">文字会居中显示在背景中</span>
               </div>
-              <textarea id="textContent" rows="3" class="field resize-y min-h-[84px]" placeholder="输入要显示的文字">AI generated</textarea>
+              <textarea id="textContent" rows="3" class="field resize-y min-h-[84px]" placeholder="输入要显示的文字"> AI-assisted
+model shown</textarea>
             </div>
             <div class="grid grid-cols-2 gap-3">
               <label class="flex items-center gap-2 tile p-3">
@@ -1030,16 +1050,11 @@
           </div>
         </div>
 
-        <div class="flex items-center justify-between gap-2 bg-white/58 backdrop-blur-xl border border-white/70 rounded-2xl shadow-xl px-3 py-2">
-          <button id="zoomOutBtn" class="w-9 h-9 rounded-xl hover:bg-white/70 grid place-items-center" title="缩小">
-            <span class="material-symbols-outlined">remove</span>
-          </button>
-          <div id="zoomLabel" class="w-16 text-center font-mono text-xs font-extrabold text-[#0058bc]">100%</div>
-          <button id="zoomInBtn" class="w-9 h-9 rounded-xl hover:bg-white/70 grid place-items-center" title="放大">
-            <span class="material-symbols-outlined">add</span>
-          </button>
-          <div class="w-px h-5 bg-[#0058bc]/20"></div>
-          <button id="actualSizeBtn" class="h-9 min-w-[82px] px-5 rounded-xl hover:bg-white/70 text-xs font-extrabold">1:1</button>
+        <div class="flex items-center gap-2 bg-white/58 backdrop-blur-xl border border-white/70 rounded-2xl shadow-xl px-3 py-2">
+          <button class="zoom-preset hover:bg-white/70" data-zoom="0.25">25%</button>
+          <button class="zoom-preset hover:bg-white/70" data-zoom="0.5">50%</button>
+          <button class="zoom-preset hover:bg-white/70" data-zoom="0.75">75%</button>
+          <button class="zoom-preset hover:bg-white/70 active" data-zoom="1">100%</button>
         </div>
 
         <button id="exportAllBtn" class="primary-button mt-auto py-4 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-2" title="导出全部图片">
@@ -1094,7 +1109,7 @@
     const DEFAULT_WATERMARK_NAME = 'AI generated watermark.png';
     const WATERMARK_ASSET_STORAGE_KEY = 'xelias-watermark-assets-v1';
     const DEFAULT_TEXT_WATERMARK_STYLE = {
-      text: 'AI generated',
+      text: ' AI-assisted\nmodel shown',
       textColor: '#ffffff',
       fontFamily: 'Inter, sans-serif',
       fontSize: 40,
@@ -1114,11 +1129,13 @@
       dragging: false,
       dragOffset: { x: 0, y: 0 },
       pendingDrag: null,
+      viewportPan: null,
       watermarkAssets: [],
       selectedAssetId: 'default',
       watermarks: [],
       activeWatermarkId: null,
       sourceDirHandle: null,
+      sourceDirPath: null,
       history: [],
       panelMode: 'image',
       textDraftStyle: { ...DEFAULT_TEXT_WATERMARK_STYLE }
@@ -1127,6 +1144,8 @@
     const els = {
       imageInput: $('imageInput'),
       folderInput: $('folderInput'),
+      folderPathInput: $('folderPathInput'),
+      loadFolderPathBtn: $('loadFolderPathBtn'),
       logoInput: $('logoInput'),
       clearBtn: $('clearBtn'),
       exportAllBtn: $('exportAllBtn'),
@@ -1171,10 +1190,7 @@
       backgroundOpacity: $('backgroundOpacity'),
       backgroundOpacityValue: $('backgroundOpacityValue'),
       saveTextHint: $('saveTextHint'),
-      zoomOutBtn: $('zoomOutBtn'),
-      zoomInBtn: $('zoomInBtn'),
-      zoomLabel: $('zoomLabel'),
-      actualSizeBtn: $('actualSizeBtn'),
+      zoomPresetButtons: [...document.querySelectorAll('.zoom-preset')],
       statusText: $('statusText'),
       fileMetaBar: $('fileMetaBar'),
       fileMetaMain: $('fileMetaMain'),
@@ -1282,6 +1298,54 @@
       renderPreview();
       updateFileMeta();
       setStatus(`已导入 ${accepted.length} 张图片`);
+    }
+
+    function clearImportedImages() {
+      state.images.forEach(item => URL.revokeObjectURL(item.url));
+      state.images = [];
+      state.selectedId = null;
+      state.sourceDirHandle = null;
+      state.sourceDirPath = null;
+    }
+
+    async function loadElectronDirectory(result) {
+      if (!result?.root || !Array.isArray(result.images)) return;
+      clearImportedImages();
+      state.sourceDirPath = result.root;
+      for (const entry of result.images) {
+        const bytes = await window.electronAPI.readImage(entry.path);
+        const file = new File([bytes], entry.name, { type: entry.type });
+        const { img, url } = await loadImageFromFile(file);
+        const item = {
+          id: crypto.randomUUID(),
+          file,
+          name: entry.name,
+          relativePath: entry.relativePath || entry.name,
+          sourcePath: entry.path,
+          size: entry.size,
+          type: entry.type || mimeFromExt(entry.name),
+          img,
+          url,
+          settings: snapshotSettings()
+        };
+        state.images.push(item);
+        if (!state.selectedId) state.selectedId = item.id;
+      }
+      renderList();
+      renderPreview();
+      updateFileMeta();
+      setStatus(`已从 ${result.root} 导入 ${state.images.length} 张图片`);
+    }
+
+    async function loadElectronFolderPath(folderPath) {
+      try {
+        setStatus('正在读取文件夹...');
+        const result = await window.electronAPI.loadDirectory(folderPath);
+        await loadElectronDirectory(result);
+      } catch (error) {
+        console.error(error);
+        setStatus(`读取文件夹失败：${error?.message || error}`);
+      }
     }
 
     function mimeFromExt(name) {
@@ -1568,7 +1632,9 @@
       els.backgroundPaddingValue.textContent = `${els.backgroundPadding.value}px`;
       els.backgroundRadiusValue.textContent = `${els.backgroundRadius.value}px`;
       els.backgroundOpacityValue.textContent = `${els.backgroundOpacity.value}%`;
-      els.zoomLabel.textContent = `${Math.round(state.zoom * 100)}%`;
+      els.zoomPresetButtons.forEach(button => {
+        button.classList.toggle('active', Math.abs(Number(button.dataset.zoom) - state.zoom) < .001);
+      });
       const canvasWidth = els.previewCanvas.width || 0;
       const canvasHeight = els.previewCanvas.height || 0;
       if (canvasWidth && canvasHeight) {
@@ -1589,6 +1655,37 @@
         if (!stage) return;
         stage.scrollLeft = Math.max(0, (stage.scrollWidth - stage.clientWidth) / 2);
         stage.scrollTop = Math.max(0, (stage.scrollHeight - stage.clientHeight) / 2);
+      });
+    }
+
+    function previewStage() {
+      return els.canvasStack?.parentElement?.parentElement || null;
+    }
+
+    function setPreviewZoom(nextZoom, clientPoint = null) {
+      const stage = previewStage();
+      const canvas = els.previewCanvas;
+      const zoom = Math.max(.05, Math.min(2, nextZoom));
+      if (!stage || !canvas.width || !canvas.height || zoom === state.zoom) {
+        state.zoom = zoom;
+        updateLabels();
+        return;
+      }
+
+      const beforeRect = canvas.getBoundingClientRect();
+      const anchorX = clientPoint?.x ?? (beforeRect.left + beforeRect.width / 2);
+      const anchorY = clientPoint?.y ?? (beforeRect.top + beforeRect.height / 2);
+      const normalizedX = beforeRect.width ? (anchorX - beforeRect.left) / beforeRect.width : .5;
+      const normalizedY = beforeRect.height ? (anchorY - beforeRect.top) / beforeRect.height : .5;
+
+      state.zoom = zoom;
+      updateLabels();
+      requestAnimationFrame(() => {
+        const afterRect = canvas.getBoundingClientRect();
+        const movedX = afterRect.left + normalizedX * afterRect.width - anchorX;
+        const movedY = afterRect.top + normalizedY * afterRect.height - anchorY;
+        stage.scrollLeft += movedX;
+        stage.scrollTop += movedY;
       });
     }
 
@@ -2360,7 +2457,17 @@
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
-    async function writeBlobToOriginalFolder(blob, name) {
+    async function writeBlobToOriginalFolder(blob, name, item = null) {
+      if (window.electronAPI && item?.sourcePath) {
+        try {
+          await window.electronAPI.writeImage(item.sourcePath, new Uint8Array(await blob.arrayBuffer()));
+          return true;
+        } catch (error) {
+          console.warn(error);
+          setStatus(`写回原文件失败：${item.relativePath || name}`);
+          return false;
+        }
+      }
       if (!state.sourceDirHandle) return false;
       try {
         const fileHandle = await state.sourceDirHandle.getFileHandle(name, { create: true });
@@ -2376,6 +2483,16 @@
     }
 
     async function importFolder() {
+      if (window.electronAPI) {
+        try {
+          const result = await window.electronAPI.chooseDirectory();
+          if (result) await loadElectronDirectory(result);
+        } catch (error) {
+          console.error(error);
+          setStatus(`读取文件夹失败：${error?.message || error}`);
+        }
+        return;
+      }
       if ('showDirectoryPicker' in window) {
         try {
           const dir = await window.showDirectoryPicker({ mode: 'readwrite' });
@@ -2398,7 +2515,7 @@
 
     async function exportAll() {
       if (!state.images.length) return setStatus('请先导入图片');
-      if (!state.sourceDirHandle) {
+      if (!state.sourceDirHandle && !state.sourceDirPath) {
         setStatus('不能导出：请用左侧“点击导入原图片文件夹”选择原图片文件夹');
         alert('请用左侧“点击导入原图片文件夹”选择文件夹授权后再导出。浏览器拖拽图片无法获得原文件夹写入权限。');
         return;
@@ -2411,7 +2528,7 @@
         setStatus(`正在导出 ${i + 1}/${state.images.length}: ${item.name}`);
         showExportProgress(`正在导出 ${i + 1}/${state.images.length}: ${item.name}`, (i / state.images.length) * 100);
         const result = await exportItem(item);
-        const wroteToFolder = await writeBlobToOriginalFolder(result.blob, result.name);
+        const wroteToFolder = await writeBlobToOriginalFolder(result.blob, result.name, item);
         if (!wroteToFolder) {
           hideExportProgress(0);
           alert('写回原文件夹失败。请重新点击左侧导入文件夹区域授权后再导出。');
@@ -2435,7 +2552,7 @@
     async function exportCurrent() {
       const item = selectedItem();
       if (!item) return setStatus('请先选择一张图片');
-      if (!state.sourceDirHandle) {
+      if (!state.sourceDirHandle && !state.sourceDirPath) {
         setStatus('不能导出：请用左侧“点击导入原图片文件夹”选择原图片文件夹');
         alert('请用左侧“点击导入原图片文件夹”选择文件夹授权后再导出当前图片。');
         return;
@@ -2443,7 +2560,7 @@
       applySettingsToSelected();
       setStatus(`正在导出当前图片：${item.name}`);
       const result = await exportItem(item);
-      const wroteToFolder = await writeBlobToOriginalFolder(result.blob, result.name);
+      const wroteToFolder = await writeBlobToOriginalFolder(result.blob, result.name, item);
       if (!wroteToFolder) {
         alert('写回原文件夹失败。请重新点击左侧导入文件夹区域授权后再导出。');
         return;
@@ -2526,6 +2643,33 @@
       };
     }
 
+    function visibleWorkbenchCenterPosition(textStyle) {
+      const stage = els.canvasStack?.parentElement?.parentElement;
+      const canvas = els.previewCanvas;
+      if (!stage || !canvas.width || !canvas.height) return { x: .5, y: .5 };
+
+      const stageRect = stage.getBoundingClientRect();
+      const canvasRect = canvas.getBoundingClientRect();
+      if (!canvasRect.width || !canvasRect.height) return { x: .5, y: .5 };
+
+      const centerX = stageRect.left + stage.clientWidth / 2;
+      const centerY = stageRect.top + stage.clientHeight / 2;
+      const metrics = watermarkMetrics({
+        type: 'text',
+        textStyle,
+        scale: 1
+      }, canvas.width);
+      const halfWidth = Math.min(.5, metrics.width / canvas.width / 2);
+      const halfHeight = Math.min(.5, metrics.height / canvas.height / 2);
+      const x = (centerX - canvasRect.left) / canvasRect.width;
+      const y = (centerY - canvasRect.top) / canvasRect.height;
+
+      return {
+        x: Math.max(halfWidth, Math.min(1 - halfWidth, x)),
+        y: Math.max(halfHeight, Math.min(1 - halfHeight, y))
+      };
+    }
+
     async function addWatermarkFile(file) {
       if (!file || !file.type.startsWith('image/')) {
         setStatus('请拖入图片格式的水印文件');
@@ -2583,6 +2727,7 @@
     function addTextWatermarkLayer() {
       updateTextDraftFromControls();
       const sameCount = state.watermarks.filter(wm => wm.type === 'text').length;
+      const initialPosition = visibleWorkbenchCenterPosition(state.textDraftStyle);
       const wm = {
         id: crypto.randomUUID(),
         assetId: 'text-layer',
@@ -2590,8 +2735,8 @@
         type: 'text',
         url: textPreviewDataUrl(state.textDraftStyle),
         textStyle: { ...state.textDraftStyle },
-        x: .5,
-        y: .5,
+        x: initialPosition.x,
+        y: initialPosition.y,
         opacity: 0.5,
         scale: 1,
         rotation: 0
@@ -2622,11 +2767,14 @@
       });
       element.addEventListener('drop', event => {
         const files = event.dataTransfer?.files;
-        if (files?.length) handler(files);
+        if (files?.length) handler(files, event);
       });
     }
 
     function bindEvents() {
+      if (window.electronAPI) {
+        document.body.classList.add('electron-mode');
+      }
       els.dropzone.onclick = importFolder;
       els.emptyState.onclick = importFolder;
       els.imageInput.onchange = e => addFiles(e.target.files);
@@ -2635,19 +2783,27 @@
         setStatus('已导入文件夹图片，但当前浏览器未授予写入权限，不能导出到原文件夹');
       };
       els.clearBtn.onclick = () => {
-        state.images.forEach(item => URL.revokeObjectURL(item.url));
-        state.images = [];
-        state.selectedId = null;
-        state.sourceDirHandle = null;
+        clearImportedImages();
         renderList();
         renderPreview();
         updateFileMeta();
         setStatus('已清空');
       };
-      bindDropzone(els.dropzone, () => {
+      bindDropzone(els.dropzone, async files => {
+        if (window.electronAPI) {
+          const droppedPath = window.electronAPI.getDroppedPath(files[0]);
+          if (droppedPath) await loadElectronFolderPath(droppedPath);
+          return;
+        }
         setStatus('请点击此区域选择文件夹授权；浏览器拖拽文件夹不能获得写入权限');
         alert('请点击“导入原图片文件夹”选择文件夹授权。浏览器拖拽文件夹无法获得写入权限，不能覆盖源文件。');
       });
+      if (els.loadFolderPathBtn) {
+        els.loadFolderPathBtn.onclick = () => loadElectronFolderPath(els.folderPathInput.value);
+        els.folderPathInput.addEventListener('keydown', event => {
+          if (event.key === 'Enter') loadElectronFolderPath(els.folderPathInput.value);
+        });
+      }
       document.body.addEventListener('drop', e => {
         e.preventDefault();
       });
@@ -2713,12 +2869,50 @@
       els.exportCurrentBtn.onclick = exportCurrent;
       els.closeModalBtn.onclick = () => els.exportModal.classList.remove('open');
       els.sampleBtn.onclick = addSample;
-      els.zoomOutBtn.onclick = () => { state.zoom = Math.max(.05, state.zoom - .1); updateLabels(); };
-      els.zoomInBtn.onclick = () => { state.zoom = Math.min(2, state.zoom + .1); updateLabels(); };
-      els.actualSizeBtn.onclick = () => { state.zoom = 1; updateLabels(); };
+      els.zoomPresetButtons.forEach(button => {
+        button.onclick = () => setPreviewZoom(Number(button.dataset.zoom));
+      });
       els.tabWorkbench.onclick = () => showTab('workbench');
       els.tabHistory.onclick = () => { renderHistory(); showTab('history'); };
+      const stage = previewStage();
+      stage.addEventListener('wheel', e => {
+        if (!selectedItem()) return;
+        e.preventDefault();
+        const factor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
+        setPreviewZoom(state.zoom * factor, { x: e.clientX, y: e.clientY });
+      }, { passive: false });
+      stage.addEventListener('pointerdown', e => {
+        if (e.button !== 1 || !selectedItem()) return;
+        e.preventDefault();
+        state.viewportPan = {
+          pointerId: e.pointerId,
+          clientX: e.clientX,
+          clientY: e.clientY,
+          scrollLeft: stage.scrollLeft,
+          scrollTop: stage.scrollTop
+        };
+        stage.classList.add('viewport-panning');
+        stage.setPointerCapture(e.pointerId);
+      });
+      stage.addEventListener('pointermove', e => {
+        const pan = state.viewportPan;
+        if (!pan || pan.pointerId !== e.pointerId) return;
+        e.preventDefault();
+        stage.scrollLeft = pan.scrollLeft - (e.clientX - pan.clientX);
+        stage.scrollTop = pan.scrollTop - (e.clientY - pan.clientY);
+      });
+      const endViewportPan = e => {
+        if (!state.viewportPan || state.viewportPan.pointerId !== e.pointerId) return;
+        state.viewportPan = null;
+        stage.classList.remove('viewport-panning');
+      };
+      stage.addEventListener('pointerup', endViewportPan);
+      stage.addEventListener('pointercancel', endViewportPan);
+      stage.addEventListener('auxclick', e => {
+        if (e.button === 1) e.preventDefault();
+      });
       els.previewCanvas.addEventListener('pointerdown', e => {
+        if (e.button !== 0) return;
         if (!selectedItem() || !state.watermarks.length) return;
         e.preventDefault();
         const point = canvasPointFromEvent(e);

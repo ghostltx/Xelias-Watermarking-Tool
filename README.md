@@ -1,8 +1,18 @@
 # Xelias Watermarking Tool
 
-一个单文件 HTML 图片水印工具。它在浏览器本地运行，可以批量给文件夹里的图片添加水印，并在获得文件夹授权后覆盖写回原图片文件。
+一个支持浏览器与 Electron 桌面模式的图片水印工具。可以批量给文件夹里的图片添加水印，并覆盖写回原图片文件。
 
 ## 快速开始
+
+### Electron 桌面模式（推荐）
+
+1. 安装 Node.js。
+2. 在项目目录运行 `npm install`。
+3. 运行 `npm start`。
+4. 可点击导入、直接把文件夹拖入左侧区域，或粘贴 Windows 文件夹路径。
+5. Electron 会递归读取该文件夹及子文件夹中的图片，导出时写回每张图片原来的位置。
+
+### 浏览器模式
 
 1. 使用最新版 Chrome 或 Edge 打开 `index.html`，也可以打开 `Xelias Watermarking Tool.html`。
 2. 点击左侧导入区域，或点击中间空状态区域，选择并授权原图片文件夹。
@@ -89,6 +99,8 @@ const DEFAULT_WATERMARK_DATA_URL = 'data:image/png;base64,...';
 ## 文件说明
 
 - `index.html`：推荐入口文件，也是 GitHub Pages 或静态网站通常默认识别的首页文件。
+- `electron/`：Electron 主进程、文件夹扫描和安全文件读写代码。
+- `package.json`：Electron 启动与测试脚本。
 - `Xelias Watermarking Tool.html`：同一个工具的描述性文件名版本，方便下载后直接双击识别用途。
 - `README.md`：项目说明文档，不参与工具运行。
 
